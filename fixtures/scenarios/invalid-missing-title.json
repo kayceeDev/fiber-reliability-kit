@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "invalid-missing-title",
+  "description": "Fixture missing a title.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fibtest1invalid"
+    }
+  },
+  "expected": {
+    "diagnostics": ["MALFORMED_INVOICE"]
+  }
+}

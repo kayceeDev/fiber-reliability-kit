@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fiber-reliability.dev/schemas/reliability-fixture.schema.json",
+  "title": "ReliabilityFixture",
+  "type": "object",
+  "required": ["schemaVersion", "id", "title", "description", "input", "expected"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input": {
+      "type": "object",
+      "required": ["intent"],
+      "properties": {
+        "intent": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["kind", "invoice"],
+              "properties": {
+                "kind": {
+                  "const": "invoice"
+                },
+                "invoice": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["kind", "amount", "assetId", "targetPubkey"],
+              "properties": {
+                "kind": {
+                  "const": "manual"
+                },
+                "amount": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "assetId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "targetPubkey": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "expected": {
+      "type": "object",
+      "required": ["diagnostics"],
+      "properties": {
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "MALFORMED_INVOICE",
+              "INVOICE_EXPIRED",
+              "INVOICE_AMOUNT_MISSING",
+              "NETWORK_MISMATCH",
+              "ASSET_MISMATCH",
+              "PEER_NOT_CONNECTED",
+              "GRAPH_NOT_SYNCED",
+              "NO_ROUTE",
+              "CHANNEL_NOT_READY",
+              "CHANNEL_CLOSED",
+              "INSUFFICIENT_OUTBOUND_LIQUIDITY",
+              "INSUFFICIENT_INBOUND_LIQUIDITY",
+              "FEE_CAP_TOO_LOW",
+              "EXPIRY_UNSAFE",
+              "PAYMENT_RETRYABLE_FAILURE",
+              "PAYMENT_TERMINAL_FAILURE",
+              "PAYMENT_STUCK_INFLIGHT",
+              "CCH_ORDER_STUCK",
+              "CCH_EXPIRY_UNSAFE",
+              "CCH_FEE_BUDGET_UNSAFE",
+              "FORCE_CLOSE_TLC_PENDING"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

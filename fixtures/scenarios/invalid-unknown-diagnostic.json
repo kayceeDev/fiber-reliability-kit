@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "invalid-unknown-diagnostic",
+  "title": "Invalid diagnostic code",
+  "description": "Fixture uses a diagnostic code outside the initial taxonomy.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fibtest1invaliddiagnostic"
+    }
+  },
+  "expected": {
+    "diagnostics": ["NOT_A_REAL_DIAGNOSTIC"]
+  }
+}

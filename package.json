@@ -1,0 +1,17 @@
+{
+  "name": "fiber-reliability-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "typecheck": "tsc -b packages/sdk/tsconfig.json packages/cli/tsconfig.json packages/lab/tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "zod": "^4.1.5"
+  }
+}

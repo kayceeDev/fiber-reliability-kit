@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "invoice-missing-amount",
+  "title": "Invoice missing amount",
+  "description": "A valid invoice requires the payer to specify the missing amount before payment.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fibtest1missingamount"
+    }
+  },
+  "expected": {
+    "diagnostics": ["INVOICE_AMOUNT_MISSING"]
+  }
+}
