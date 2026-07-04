@@ -34,21 +34,21 @@ describe('lab payment and route explanation view-models', () => {
     ])
   })
 
-  it('builds a route/liquidity view-model from the manual peer fixture', async () => {
-    const viewModel = await buildRouteLiquidityViewModel('manual-peer-missing')
+  it('builds a route/liquidity view-model from a readiness fixture using computed diagnostics', async () => {
+    const viewModel = await buildRouteLiquidityViewModel('insufficient-outbound-liquidity')
 
-    expect(viewModel.scenarioId).toBe('manual-peer-missing')
+    expect(viewModel.scenarioId).toBe('insufficient-outbound-liquidity')
     expect(viewModel.assetId).toBe('CKB')
-    expect(viewModel.diagnosticCodes).toEqual(['PEER_NOT_CONNECTED'])
+    expect(viewModel.diagnosticCodes).toEqual(['INSUFFICIENT_OUTBOUND_LIQUIDITY'])
   })
 
   it('exposes a stable route/liquidity shape for rendering', async () => {
     const viewModel: RouteLiquidityViewModel = await buildRouteLiquidityViewModel(
-      'manual-peer-missing'
+      'insufficient-outbound-liquidity'
     )
 
     expect(viewModel).toMatchObject({
-      scenarioId: 'manual-peer-missing',
+      scenarioId: 'insufficient-outbound-liquidity',
       assetId: 'CKB'
     })
   })

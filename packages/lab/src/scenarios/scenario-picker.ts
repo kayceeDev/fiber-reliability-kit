@@ -1,9 +1,8 @@
+import { readdir } from 'node:fs/promises'
+
 import { loadReliabilityFixture, type ReliabilityFixture } from '@fiber-reliability/sdk'
 
-const scenarioFileNames = [
-  'invoice-missing-amount.json',
-  'manual-peer-missing.json'
-] as const
+const scenarioDirectory = new URL('../../../../fixtures/scenarios/', import.meta.url)
 
 export type ScenarioSummary = {
   id: string
@@ -24,12 +23,20 @@ function toScenarioSummary(fixture: ReliabilityFixture): ScenarioSummary {
   }
 }
 
+async function readValidScenarioFileNames(): Promise<string[]> {
+  const fileNames = await readdir(scenarioDirectory)
+
+  return fileNames
+    .filter((fileName) => fileName.endsWith('.json'))
+    .filter((fileName) => !fileName.startsWith('invalid-'))
+    .sort()
+}
+
 export async function listFixtureScenarios(): Promise<ScenarioSummary[]> {
+  const fileNames = await readValidScenarioFileNames()
   const scenarios = await Promise.all(
-    scenarioFileNames.map((fileName) =>
-      loadReliabilityFixture(
-        new URL(`../../../../fixtures/scenarios/${fileName}`, import.meta.url)
-      )
+    fileNames.map((fileName) =>
+      loadReliabilityFixture(new URL(fileName, scenarioDirectory))
     )
   )
 

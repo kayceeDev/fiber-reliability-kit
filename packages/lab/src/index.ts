@@ -23,3 +23,7 @@ export {
   type CreateLocalRpcModeInput,
   type LocalRpcModeConfig
 } from './config/local-rpc-mode.js'
+export {
+  renderReliabilityLabApp,
+  type RenderReliabilityLabAppInput
+} from './app/render-lab-app.js'

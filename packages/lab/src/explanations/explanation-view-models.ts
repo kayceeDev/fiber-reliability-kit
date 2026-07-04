@@ -1,4 +1,6 @@
 import {
+  executeFixturePaymentExplanation,
+  executeFixtureReadiness,
   explainPayment,
   loadReliabilityFixture,
   type DiagnosticCode,
@@ -22,40 +24,101 @@ export type RouteLiquidityViewModel = {
 export function buildPaymentExplanationViewModel(
   paymentHash: string
 ): PaymentExplanationViewModel {
-  const report =
+  const fixture =
     paymentHash === '0xretry'
-      ? explainPayment({
-          paymentHash,
-          paymentFlow: 'outbound',
-          attempts: [
-            {
-              id: 'attempt-1',
-              status: 'FAILED_RETRYABLE',
-              startedAtIso: '2026-07-03T00:00:00.000Z',
-              finishedAtIso: '2026-07-03T00:00:05.000Z',
-              failureReason: 'Temporary route failure'
+      ? {
+          schemaVersion: 1 as const,
+          id: 'payment-retryable-failure',
+          title: 'Payment retryable failure',
+          description: 'The latest payment attempt failed in a retryable way.',
+          input: {
+            intent: {
+              kind: 'invoice' as const,
+              invoice: 'fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-05T00:00:00.000Z'
             }
-          ]
-        })
-      : explainPayment({
-          paymentHash,
-          paymentFlow: 'outbound',
-          attempts: [
-            {
-              id: 'attempt-1',
-              status: 'FAILED_RETRYABLE',
-              startedAtIso: '2026-07-03T00:00:00.000Z',
-              finishedAtIso: '2026-07-03T00:00:05.000Z',
-              failureReason: 'Path not found'
+          },
+          context: {
+            paymentTimeline: {
+              paymentHash,
+              paymentFlow: 'outbound' as const,
+              attempts: [
+                {
+                  id: 'attempt-1',
+                  status: 'FAILED_RETRYABLE' as const,
+                  startedAtIso: '2026-07-04T00:00:00.000Z',
+                  finishedAtIso: '2026-07-04T00:00:05.000Z',
+                  failureReason: 'Temporary route failure'
+                }
+              ]
+            }
+          },
+          expected: {
+            diagnostics: ['PAYMENT_RETRYABLE_FAILURE' as const]
+          }
+        }
+      : paymentHash === '0xmulti'
+        ? {
+            schemaVersion: 1 as const,
+            id: 'payment-succeeded-after-retry',
+            title: 'Payment succeeded after retry',
+            description: 'A retryable first attempt is followed by a successful payment completion.',
+            input: {
+              intent: {
+                kind: 'invoice' as const,
+                invoice: 'fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-05T00:00:00.000Z'
+              }
             },
-            {
-              id: 'attempt-2',
-              status: 'SUCCEEDED',
-              startedAtIso: '2026-07-03T00:00:06.000Z',
-              finishedAtIso: '2026-07-03T00:00:12.000Z'
+            context: {
+              paymentTimeline: {
+                paymentHash,
+                paymentFlow: 'outbound' as const,
+                attempts: [
+                  {
+                    id: 'attempt-1',
+                    status: 'FAILED_RETRYABLE' as const,
+                    startedAtIso: '2026-07-04T00:00:00.000Z',
+                    finishedAtIso: '2026-07-04T00:00:05.000Z',
+                    failureReason: 'Path not found'
+                  },
+                  {
+                    id: 'attempt-2',
+                    status: 'SUCCEEDED' as const,
+                    startedAtIso: '2026-07-04T00:00:06.000Z',
+                    finishedAtIso: '2026-07-04T00:00:12.000Z'
+                  }
+                ]
+              }
+            },
+            expected: {
+              diagnostics: [] as const
             }
-          ]
-        })
+          }
+        : undefined
+
+  if (fixture) {
+    const report = executeFixturePaymentExplanation(fixture)
+
+    return {
+      paymentHash,
+      summary: report.summary,
+      failureKind: report.failureKind,
+      eventKinds: report.timeline.events.map((event) => event.kind)
+    }
+  }
+
+  const report = explainPayment({
+    paymentHash,
+    paymentFlow: 'outbound',
+    attempts: [
+      {
+        id: 'attempt-1',
+        status: 'FAILED_TERMINAL',
+        startedAtIso: '2026-07-04T00:00:00.000Z',
+        finishedAtIso: '2026-07-04T00:00:05.000Z',
+        failureReason: 'Invoice rejected'
+      }
+    ]
+  })
 
   return {
     paymentHash,
@@ -68,21 +131,31 @@ export function buildPaymentExplanationViewModel(
 export async function buildRouteLiquidityViewModel(
   scenarioId: string
 ): Promise<RouteLiquidityViewModel> {
-  if (scenarioId !== 'manual-peer-missing') {
+  let fixture
+
+  try {
+    fixture = await loadReliabilityFixture(
+      new URL(`../../../../fixtures/scenarios/${scenarioId}.json`, import.meta.url)
+    )
+  } catch {
     throw new Error(`Route/liquidity view is unavailable for scenario: ${scenarioId}`)
   }
 
-  const fixture = await loadReliabilityFixture(
-    new URL(`../../../../fixtures/scenarios/${scenarioId}.json`, import.meta.url)
-  )
+  if (!fixture.context?.readiness) {
+    throw new Error(`Route/liquidity view is unavailable for scenario: ${scenarioId}`)
+  }
 
-  if (fixture.input.intent.kind !== 'manual') {
+  const channel = fixture.context.readiness.channels[0]
+
+  if (!channel) {
     throw new Error(`Route/liquidity view is unavailable for scenario: ${scenarioId}`)
   }
 
   return {
     scenarioId: fixture.id,
-    assetId: fixture.input.intent.assetId,
-    diagnosticCodes: fixture.expected.diagnostics
+    assetId: channel.assetId,
+    diagnosticCodes: executeFixtureReadiness(fixture).diagnostics.map(
+      (diagnostic) => diagnostic.code
+    )
   }
 }

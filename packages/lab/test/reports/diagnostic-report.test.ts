@@ -6,12 +6,12 @@ import {
 } from '../../src/index.js'
 
 describe('lab diagnostic report view-model', () => {
-  it('builds a diagnostic card list from the invoice-missing-amount fixture', async () => {
-    const report = await buildDiagnosticReport('invoice-missing-amount')
+  it('builds a diagnostic card list from a readiness fixture using computed diagnostics', async () => {
+    const report = await buildDiagnosticReport('graph-not-synced')
 
-    expect(report.scenarioId).toBe('invoice-missing-amount')
+    expect(report.scenarioId).toBe('graph-not-synced')
     expect(report.diagnostics.map((diagnostic) => diagnostic.code)).toEqual([
-      'INVOICE_AMOUNT_MISSING'
+      'GRAPH_NOT_SYNCED'
     ])
   })
 
@@ -34,12 +34,12 @@ describe('lab diagnostic report view-model', () => {
 
   it('returns a stable view-model shape for rendering layers', async () => {
     const report: DiagnosticReportViewModel = await buildDiagnosticReport(
-      'invoice-missing-amount'
+      'graph-not-synced'
     )
 
     expect(report).toMatchObject({
-      scenarioId: 'invoice-missing-amount',
-      title: 'Invoice missing amount'
+      scenarioId: 'graph-not-synced',
+      title: 'Graph not synced'
     })
   })
 

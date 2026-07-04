@@ -12,8 +12,21 @@ describe('lab scenario scaffold', () => {
     const scenarios = await listFixtureScenarios()
 
     expect(scenarios.map((scenario) => scenario.id)).toEqual([
+      'cch-fee-budget-unsafe',
+      'cch-order-stuck',
+      'channel-closed',
+      'channel-not-ready',
+      'expiry-unsafe',
+      'fee-cap-too-low',
+      'graph-not-synced',
+      'happy-payment',
+      'insufficient-inbound-liquidity',
+      'insufficient-outbound-liquidity',
       'invoice-missing-amount',
-      'manual-peer-missing'
+      'manual-peer-missing',
+      'no-route',
+      'payment-retryable-failure',
+      'payment-succeeded-after-retry'
     ])
   })
 
@@ -21,15 +34,15 @@ describe('lab scenario scaffold', () => {
     const scenarios = await listFixtureScenarios()
     const firstScenario: ScenarioSummary | undefined = scenarios[0]
 
-    expect(firstScenario?.title).toBe('Invoice missing amount')
-    expect(firstScenario?.description).toContain('payer to specify the missing amount')
+    expect(firstScenario?.title).toBe('CCH fee budget unsafe')
+    expect(firstScenario?.description).toContain('fee budget')
   })
 
   it('builds picker state with the first scenario selected by default', async () => {
     const state = await createScenarioPickerState()
 
-    expect(state.selectedScenarioId).toBe('invoice-missing-amount')
-    expect(state.scenarios).toHaveLength(2)
+    expect(state.selectedScenarioId).toBe('cch-fee-budget-unsafe')
+    expect(state.scenarios).toHaveLength(15)
   })
 
   it('updates picker state when a new scenario is selected', async () => {
