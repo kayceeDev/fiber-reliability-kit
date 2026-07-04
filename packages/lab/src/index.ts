@@ -27,3 +27,4 @@ export {
   renderReliabilityLabApp,
   type RenderReliabilityLabAppInput
 } from './app/render-lab-app.js'
+export { renderReliabilityLabDocument } from './app/render-lab-document.js'
