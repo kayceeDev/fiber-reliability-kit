@@ -1,15 +1,15 @@
 # Near-term roadmap
 
-1. Expand fixture corpus for route-not-found, pending TLC settlement, CCH recovery, and force-close scenarios.
-2. Add richer CLI output formatting, snapshots, and exit-code semantics.
-3. Add Lab rendering components for diagnostic cards, timelines, and route/liquidity panels.
-4. Add local read-only live checks against operator-provided Fiber RPC nodes.
-5. Prepare final hosted demo packaging and hackathon submission assets.
+1. Expand the canonical fixture corpus further for pending TLC settlement, CCH recovery, and broader multi-hop routing cases.
+2. Improve diagnostic evidence generation so reports expose richer observed state instead of minimal placeholders.
+3. Deepen local read-only live checks against operator-provided Fiber RPC nodes.
+4. Add a richer browser-facing Lab presentation layer if the packaged HTML shell proves too limiting.
+5. Finalize hosted demo packaging and final submission polish.
 
 # Current limitations
 
-- The hosted/demo Lab currently exposes view-model scaffolding rather than a full rendered application.
-- CLI command execution is still fixture-oriented and intentionally thin.
+- The Reliability Lab is now rendered and packaged as HTML, but it is still a lightweight document surface rather than a full browser framework app.
+- Some CLI command paths still rely on curated fixture selection for known payment hashes instead of generalized fixture lookup.
 - Real Fiber invoice decoding is not yet wired to upstream protocol parsing.
 - Payment explanation and CCH inspection are domain-level classifiers, not full live-node history reconstructions.
 - Rebalance planning is dry-run only and does not execute any routing action.

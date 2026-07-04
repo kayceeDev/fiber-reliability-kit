@@ -10,7 +10,7 @@ Fiber Reliability Kit is a reusable reliability layer for Fiber Network on Nervo
 
 - `@fiber-reliability/sdk`
 - `fiber-doctor` CLI
-- Reliability Lab scaffold
+- Reliability Lab packaged HTML demo surface
 
 ## What it demonstrates
 
@@ -19,10 +19,10 @@ Fiber Reliability Kit is a reusable reliability layer for Fiber Network on Nervo
 - payment failure classification
 - CCH inspection warnings
 - dry-run rebalance planning
-- fixture-first demo and CLI workflows
+- fixture-first CLI and rendered Lab workflows
 
 ## Current live/mocked split
 
-- Fully working: SDK fixture diagnostics, CLI fixture mode, Reliability Lab scaffold
+- Fully working: SDK fixture diagnostics, fixture-driven CLI workflows, packaged Reliability Lab HTML surface
 - Optional live mode: local/operator-provided Fiber RPC
 - Mocked/simulated: public hosted demo data

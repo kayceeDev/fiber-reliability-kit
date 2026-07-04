@@ -1,10 +1,13 @@
 import {
-  diagnosticMetadataByCode,
+  createDiagnostic,
   executeFixtureCchInspection,
   executeFixturePaymentExplanation,
   executeFixtureReadiness,
   loadReliabilityFixture,
+  diagnosticMetadataByCode,
   type DiagnosticCode,
+  type DiagnosticEvidence,
+  type DiagnosticItem,
   type DiagnosticSeverity,
   type DiagnosticSource,
   type RecoveryAction,
@@ -16,7 +19,7 @@ export type DiagnosticCardViewModel = {
   severity: DiagnosticSeverity
   source: DiagnosticSource
   summary: string
-  evidence: readonly []
+  evidence: readonly string[]
   recoveryActions: readonly RecoveryAction[]
 }
 
@@ -27,35 +30,37 @@ export type DiagnosticReportViewModel = {
   diagnostics: readonly DiagnosticCardViewModel[]
 }
 
-function toDiagnosticCard(code: DiagnosticCode): DiagnosticCardViewModel {
-  const metadata = diagnosticMetadataByCode[code]
+function formatEvidence(evidence: readonly DiagnosticEvidence[]): string[] {
+  return evidence.map((item) => `${item.label}: ${String(item.value)}`)
+}
+
+function toDiagnosticCard(diagnostic: DiagnosticItem): DiagnosticCardViewModel {
+  const metadata = diagnosticMetadataByCode[diagnostic.code]
 
   return {
-    code,
-    severity: metadata.severity,
-    source: metadata.source,
-    summary: metadata.summary,
-    evidence: [],
-    recoveryActions: metadata.recoveryActions
+    code: diagnostic.code,
+    severity: diagnostic.severity,
+    source: diagnostic.source,
+    summary: diagnostic.summary || metadata.summary,
+    evidence: formatEvidence(diagnostic.evidence),
+    recoveryActions: diagnostic.recoveryActions
   }
 }
 
-function computeDiagnosticCodes(fixture: ReliabilityFixture): readonly DiagnosticCode[] {
+function computeDiagnostics(fixture: ReliabilityFixture): readonly DiagnosticItem[] {
   if (fixture.context?.readiness) {
-    return executeFixtureReadiness(fixture).diagnostics.map((diagnostic) => diagnostic.code)
+    return executeFixtureReadiness(fixture).diagnostics
   }
 
   if (fixture.context?.paymentTimeline) {
-    return executeFixturePaymentExplanation(fixture).diagnostics.map(
-      (diagnostic) => diagnostic.code
-    )
+    return executeFixturePaymentExplanation(fixture).diagnostics
   }
 
   if (fixture.context?.cch) {
-    return executeFixtureCchInspection(fixture).diagnostics.map((diagnostic) => diagnostic.code)
+    return executeFixtureCchInspection(fixture).diagnostics
   }
 
-  return fixture.expected.diagnostics
+  return fixture.expected.diagnostics.map((code) => createDiagnostic(code))
 }
 
 export async function buildDiagnosticReport(
@@ -75,6 +80,6 @@ export async function buildDiagnosticReport(
     scenarioId: fixture.id,
     title: fixture.title,
     description: fixture.description,
-    diagnostics: computeDiagnosticCodes(fixture).map(toDiagnosticCard)
+    diagnostics: computeDiagnostics(fixture).map(toDiagnosticCard)
   }
 }

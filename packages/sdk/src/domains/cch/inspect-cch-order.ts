@@ -42,18 +42,39 @@ export function inspectCchOrder(input: InspectCchOrderInput): CchOrderReport {
   const diagnostics: DiagnosticItem[] = []
 
   if (input.orderStatus === 'IN_FLIGHT') {
-    diagnostics.push(createDiagnostic('CCH_ORDER_STUCK'))
+    diagnostics.push(
+      createDiagnostic('CCH_ORDER_STUCK', {
+        evidence: [
+          { label: 'orderStatus', value: input.orderStatus },
+          { label: 'direction', value: input.direction }
+        ]
+      })
+    )
   }
 
   if (input.expiryDelta < input.minSafeExpiryDelta) {
-    diagnostics.push(createDiagnostic('CCH_EXPIRY_UNSAFE'))
+    diagnostics.push(
+      createDiagnostic('CCH_EXPIRY_UNSAFE', {
+        evidence: [
+          { label: 'expiryDelta', value: input.expiryDelta },
+          { label: 'minSafeExpiryDelta', value: input.minSafeExpiryDelta }
+        ]
+      })
+    )
   }
 
   const feeBudget = Number(input.feeBudget)
   const minSafeFeeBudget = Number(input.minSafeFeeBudget)
 
   if (!Number.isNaN(feeBudget) && !Number.isNaN(minSafeFeeBudget) && feeBudget < minSafeFeeBudget) {
-    diagnostics.push(createDiagnostic('CCH_FEE_BUDGET_UNSAFE'))
+    diagnostics.push(
+      createDiagnostic('CCH_FEE_BUDGET_UNSAFE', {
+        evidence: [
+          { label: 'feeBudget', value: feeBudget },
+          { label: 'minSafeFeeBudget', value: minSafeFeeBudget }
+        ]
+      })
+    )
   }
 
   const report: CchOrderReport = {

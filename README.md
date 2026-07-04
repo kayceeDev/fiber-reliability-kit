@@ -9,16 +9,17 @@ It answers a simple integration question:
 ## Components
 
 - **SDK** — reusable payment intent, readiness, payment timeline, CCH, and rebalance planning logic
-- **fiber-doctor CLI** — fixture-first operator and developer command surface
-- **Reliability Lab** — fixture-driven demo scaffold for scenario selection, diagnostic reports, and local RPC guardrails
+- **fiber-doctor CLI** — fixture-driven operator and developer command surface with JSON, human, and severity-based exit codes
+- **Reliability Lab** — fixture-driven rendered demo surface with scenario discovery, diagnostic reports, explanation panels, and local RPC guardrails
 
 ## Fully working
 
-- SDK fixture diagnostics
-- SDK readiness engine
+- SDK fixture diagnostics and canonical fixture execution helpers
+- SDK readiness engine with peer, graph, channel, liquidity, fee-cap, and expiry checks
 - SDK payment explanation, CCH inspection, and rebalance planning domains
-- CLI fixture mode for `can-pay`, `explain-payment`, `cch`, `liquidity`, and `node-health`
-- Hosted/demo-facing Reliability Lab scenario picker and report view-model scaffolding
+- CLI fixture-driven `can-pay`, `explain-payment`, `cch`, `liquidity`, and `node-health`
+- CLI JSON snapshots, human output snapshots, and severity-based exit-code mapping
+- Reliability Lab scenario discovery, rendered report/explanation panels, local RPC guardrails, and packaged HTML document surface
 
 ## Optional live mode
 
@@ -30,13 +31,14 @@ It answers a simple integration question:
 
 - Public hosted demo data
 - Fixture-backed scenario rendering in the Reliability Lab
-- Current CLI command execution examples that use fixture-derived SDK paths
+- Curated fixture scenarios that stand in for live Fiber network state
 
 ## Production requirements
 
 - Hardened RPC access controls
 - Version compatibility matrix against upstream Fiber RPC changes
 - Broader fixture corpus for payment, CCH, routing, and force-close edge cases
+- Richer evidence capture from live and fixture-driven executions
 - Live-node integration testing
 - Ongoing tracking of Fiber RPC and invoice protocol changes
 
@@ -57,7 +59,7 @@ It answers a simple integration question:
 
 3. Inspect fixture scenarios under [fixtures/scenarios/](fixtures/scenarios/).
 
-4. Use the CLI package exports and Lab view-model helpers as the current runnable demo surfaces.
+4. Use the CLI package exports and the packaged Lab HTML/document renderers as the current runnable demo surfaces.
 
 ## Repository structure
 

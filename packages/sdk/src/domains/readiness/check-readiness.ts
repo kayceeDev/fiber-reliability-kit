@@ -27,26 +27,47 @@ function normalizeChannelAssetId(channel: NormalizedFiberChannel): string {
 }
 
 function appendChannelDiagnostics(report: ReadinessReport, channels: readonly NormalizedFiberChannel[]) {
-  const hasPendingTlc = channels.some(
+  const pendingTlcChannel = channels.find(
     (channel) => channel.state === 'CHANNEL_FORCE_CLOSED_PENDING_TLC'
   )
 
-  if (hasPendingTlc) {
-    report.diagnostics.push(createDiagnostic('FORCE_CLOSE_TLC_PENDING'))
+  if (pendingTlcChannel) {
+    report.diagnostics.push(
+      createDiagnostic('FORCE_CLOSE_TLC_PENDING', {
+        evidence: [
+          { label: 'channelId', value: pendingTlcChannel.channelId },
+          { label: 'channelState', value: pendingTlcChannel.state }
+        ]
+      })
+    )
     return
   }
 
-  const hasClosedChannel = channels.some((channel) => channel.state === 'CHANNEL_CLOSED')
+  const closedChannel = channels.find((channel) => channel.state === 'CHANNEL_CLOSED')
 
-  if (hasClosedChannel) {
-    report.diagnostics.push(createDiagnostic('CHANNEL_CLOSED'))
+  if (closedChannel) {
+    report.diagnostics.push(
+      createDiagnostic('CHANNEL_CLOSED', {
+        evidence: [
+          { label: 'channelId', value: closedChannel.channelId },
+          { label: 'channelState', value: closedChannel.state }
+        ]
+      })
+    )
     return
   }
 
-  const hasNotReadyChannel = channels.some((channel) => channel.state !== 'CHANNEL_READY')
+  const notReadyChannel = channels.find((channel) => channel.state !== 'CHANNEL_READY')
 
-  if (hasNotReadyChannel) {
-    report.diagnostics.push(createDiagnostic('CHANNEL_NOT_READY'))
+  if (notReadyChannel) {
+    report.diagnostics.push(
+      createDiagnostic('CHANNEL_NOT_READY', {
+        evidence: [
+          { label: 'channelId', value: notReadyChannel.channelId },
+          { label: 'channelState', value: notReadyChannel.state }
+        ]
+      })
+    )
   }
 }
 
@@ -84,7 +105,17 @@ function appendLiquidityDiagnostics(report: ReadinessReport, channels: readonly 
   )
 
   if (matchingAssetChannels.length !== channels.length) {
-    report.diagnostics.push(createDiagnostic('ASSET_MISMATCH'))
+    report.diagnostics.push(
+      createDiagnostic('ASSET_MISMATCH', {
+        evidence: [
+          { label: 'expectedAssetId', value: expectedAssetId },
+          {
+            label: 'observedAssetIds',
+            value: channels.map((channel) => normalizeChannelAssetId(channel)).join(', ')
+          }
+        ]
+      })
+    )
   }
 
   const localBalance = matchingAssetChannels.reduce(
@@ -105,12 +136,29 @@ function appendLiquidityDiagnostics(report: ReadinessReport, channels: readonly 
     0
   )
 
-  if ((matchingAssetChannels.length > 0 ? localBalance : allLocalBalance) < invoiceAmount) {
-    report.diagnostics.push(createDiagnostic('INSUFFICIENT_OUTBOUND_LIQUIDITY'))
+  const effectiveLocalBalance = matchingAssetChannels.length > 0 ? localBalance : allLocalBalance
+  const effectiveRemoteBalance = matchingAssetChannels.length > 0 ? remoteBalance : allRemoteBalance
+
+  if (effectiveLocalBalance < invoiceAmount) {
+    report.diagnostics.push(
+      createDiagnostic('INSUFFICIENT_OUTBOUND_LIQUIDITY', {
+        evidence: [
+          { label: 'invoiceAmount', value: invoiceAmount },
+          { label: 'localBalance', value: effectiveLocalBalance }
+        ]
+      })
+    )
   }
 
-  if ((matchingAssetChannels.length > 0 ? remoteBalance : allRemoteBalance) < invoiceAmount) {
-    report.diagnostics.push(createDiagnostic('INSUFFICIENT_INBOUND_LIQUIDITY'))
+  if (effectiveRemoteBalance < invoiceAmount) {
+    report.diagnostics.push(
+      createDiagnostic('INSUFFICIENT_INBOUND_LIQUIDITY', {
+        evidence: [
+          { label: 'invoiceAmount', value: invoiceAmount },
+          { label: 'remoteBalance', value: effectiveRemoteBalance }
+        ]
+      })
+    )
   }
 }
 
@@ -124,7 +172,14 @@ function appendFeeAndExpiryDiagnostics(report: ReadinessReport, input: CheckRead
     const feeCap = Number(input.feeCap)
 
     if (!Number.isNaN(routeFee) && !Number.isNaN(feeCap) && routeFee > feeCap) {
-      report.diagnostics.push(createDiagnostic('FEE_CAP_TOO_LOW'))
+      report.diagnostics.push(
+        createDiagnostic('FEE_CAP_TOO_LOW', {
+          evidence: [
+            { label: 'routeFee', value: routeFee },
+            { label: 'feeCap', value: feeCap }
+          ]
+        })
+      )
     }
   }
 
@@ -133,7 +188,14 @@ function appendFeeAndExpiryDiagnostics(report: ReadinessReport, input: CheckRead
     input.minSafeExpiryDelta !== undefined &&
     input.routeExpiryDelta < input.minSafeExpiryDelta
   ) {
-    report.diagnostics.push(createDiagnostic('EXPIRY_UNSAFE'))
+    report.diagnostics.push(
+      createDiagnostic('EXPIRY_UNSAFE', {
+        evidence: [
+          { label: 'routeExpiryDelta', value: input.routeExpiryDelta },
+          { label: 'minSafeExpiryDelta', value: input.minSafeExpiryDelta }
+        ]
+      })
+    )
   }
 }
 
@@ -142,11 +204,25 @@ export function checkReadiness(input: CheckReadinessInput): ReadinessReport {
   const targetPeerChannels = findTargetPeerChannels(input.channels, input.targetPeerId)
 
   if (!hasConnectedPeer(input.peers, input.targetPeerId)) {
-    report.diagnostics.push(createDiagnostic('PEER_NOT_CONNECTED'))
+    report.diagnostics.push(
+      createDiagnostic('PEER_NOT_CONNECTED', {
+        evidence: [
+          { label: 'targetPeerId', value: input.targetPeerId },
+          { label: 'peerConnected', value: false }
+        ]
+      })
+    )
   }
 
   if (!input.node.graphSynced) {
-    report.diagnostics.push(createDiagnostic('GRAPH_NOT_SYNCED'))
+    report.diagnostics.push(
+      createDiagnostic('GRAPH_NOT_SYNCED', {
+        evidence: [
+          { label: 'graphSynced', value: input.node.graphSynced },
+          { label: 'blockHeight', value: input.node.blockHeight }
+        ]
+      })
+    )
   }
 
   appendChannelDiagnostics(report, targetPeerChannels)
@@ -154,7 +230,14 @@ export function checkReadiness(input: CheckReadinessInput): ReadinessReport {
   appendFeeAndExpiryDiagnostics(report, input)
 
   if (!input.routeAvailable) {
-    report.diagnostics.push(createDiagnostic('NO_ROUTE'))
+    report.diagnostics.push(
+      createDiagnostic('NO_ROUTE', {
+        evidence: [
+          { label: 'routeAvailable', value: input.routeAvailable },
+          { label: 'targetPeerId', value: input.targetPeerId }
+        ]
+      })
+    )
   }
 
   return report
