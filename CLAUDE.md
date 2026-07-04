@@ -380,6 +380,146 @@ Commit message:
 demo: add Fiber Reliability Lab
 ```
 
+### Milestone 5A: Canonical Fixture Expansion
+
+Define:
+
+- Expand the fixture schema beyond `input.intent` and `expected.diagnostics`.
+- Add readiness context blocks for node, peers, channels, routing, fee cap, and expiry state.
+- Build a broader canonical fixture corpus that can drive SDK, CLI, and Lab behavior.
+
+Initial fixture scenarios:
+
+- Happy payment.
+- Graph not synced.
+- No route.
+- Channel not ready.
+- Channel closed.
+- Insufficient outbound liquidity.
+- Receiver inbound liquidity gap.
+- Fee cap too low.
+- Unsafe expiry.
+
+Automated tests:
+
+- Schema validation for expanded readiness fixtures.
+- Loader tests for readiness context blocks.
+- Fixture inventory tests for the initial readiness scenario set.
+
+Manual verification:
+
+- Inspect representative readiness fixtures for realism and naming consistency.
+- Confirm readiness fixtures are sufficient to drive SDK checks without live RPC.
+
+Commit message:
+
+```text
+fixtures: expand canonical Fiber reliability scenario corpus
+```
+
+### Milestone 5B: SDK Fixture-Driven Scenario Engine
+
+Define:
+
+- Add shared fixture-to-SDK execution helpers.
+- Compute readiness and related reports from fixture context instead of hand-authored test inputs.
+- Validate that fixture expectations match computed SDK outputs.
+
+Automated tests:
+
+- Fixture-driven SDK integration tests.
+- Regression tests for multi-diagnostic readiness scenarios.
+- Assertions that computed diagnostics match fixture expectations.
+
+Manual verification:
+
+- Inspect sample computed reports for evidence, severity, and recovery quality.
+- Confirm fixtures now act as the canonical scenario driver.
+
+Commit message:
+
+```text
+sdk: drive reliability reports from canonical fixtures
+```
+
+### Milestone 5C: Real CLI Workflows From Shared Scenarios
+
+Define:
+
+- Replace curated branches in the CLI with fixture-driven SDK execution.
+- Render `can-pay`, `explain-payment`, `cch`, `liquidity`, and `node-health` from shared computed results.
+- Add command snapshots and exit-code behavior.
+
+Automated tests:
+
+- JSON snapshots.
+- Human output snapshots.
+- Exit-code tests.
+- `--fixture` parity tests across all commands.
+
+Manual verification:
+
+- Run all CLI commands against bundled fixtures.
+- Confirm outputs remain operator-friendly and local-RPC mode stays operator-controlled.
+
+Commit message:
+
+```text
+cli: run fiber-doctor commands from shared reliability scenarios
+```
+
+### Milestone 5D: Rendered Reliability Lab Application
+
+Define:
+
+- Turn the Lab from view-model helpers into a rendered application.
+- Render scenario picker, diagnostic cards, evidence, recovery actions, payment timeline, and route/liquidity panels.
+- Preserve explicit mocked-vs-local-RPC labeling.
+
+Automated tests:
+
+- Component smoke tests.
+- Scenario rendering tests.
+- Mobile and desktop layout checks.
+- Local-RPC mode guardrail tests.
+
+Manual verification:
+
+- Walk through a representative scenario set in the rendered Lab.
+- Confirm the app reinforces the infrastructure thesis rather than drifting into wallet UX.
+
+Commit message:
+
+```text
+lab: render the Fiber Reliability Lab app
+```
+
+### Milestone 5E: Final Acceptance + Submission Hardening
+
+Define:
+
+- Align docs with actual product behavior.
+- Run end-to-end acceptance checks across SDK, CLI, and Lab.
+- Finalize submission messaging with no scaffold/stub ambiguity.
+
+Automated tests:
+
+- Root typecheck.
+- Full test suite.
+- Lab smoke/build verification.
+- Fixture coverage audit.
+
+Manual verification:
+
+- Compare one scenario across SDK, CLI JSON, CLI human output, and Lab output.
+- Confirm working vs mocked vs optional-live messaging is accurate.
+
+Commit message:
+
+```text
+docs: finalize product completion and submission positioning
+```
+
 ## Test Plan
 
 Automated tests must cover:

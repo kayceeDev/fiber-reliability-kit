@@ -12,8 +12,8 @@ export type PaymentAttempt = {
   id: string
   status: PaymentAttemptStatus
   startedAtIso: string
-  finishedAtIso?: string
-  failureReason?: string
+  finishedAtIso?: string | undefined
+  failureReason?: string | undefined
 }
 
 export type PaymentTimelineEventKind =

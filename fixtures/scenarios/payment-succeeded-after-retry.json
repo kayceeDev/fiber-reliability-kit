@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "payment-succeeded-after-retry",
+  "title": "Payment succeeded after retry",
+  "description": "A retryable first attempt is followed by a successful payment completion.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-05T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "paymentTimeline": {
+      "paymentHash": "0xmulti",
+      "paymentFlow": "outbound",
+      "attempts": [
+        {
+          "id": "attempt-1",
+          "status": "FAILED_RETRYABLE",
+          "startedAtIso": "2026-07-04T00:00:00.000Z",
+          "finishedAtIso": "2026-07-04T00:00:05.000Z",
+          "failureReason": "Path not found"
+        },
+        {
+          "id": "attempt-2",
+          "status": "SUCCEEDED",
+          "startedAtIso": "2026-07-04T00:00:06.000Z",
+          "finishedAtIso": "2026-07-04T00:00:12.000Z"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "diagnostics": []
+  }
+}

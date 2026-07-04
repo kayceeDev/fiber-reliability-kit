@@ -13,10 +13,10 @@ export type CheckReadinessInput = {
   channels: readonly NormalizedFiberChannel[]
   routeAvailable: boolean
   targetPeerId: string
-  routeFee?: string
-  feeCap?: string
-  routeExpiryDelta?: number
-  minSafeExpiryDelta?: number
+  routeFee?: string | undefined
+  feeCap?: string | undefined
+  routeExpiryDelta?: number | undefined
+  minSafeExpiryDelta?: number | undefined
 }
 
 export type ReadinessReport = {

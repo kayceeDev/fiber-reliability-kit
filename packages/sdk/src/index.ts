@@ -19,11 +19,14 @@ export {
 } from './domains/diagnostics/taxonomy.js'
 export { fixtureSchemaVersion, loadReliabilityFixture } from './domains/fixture/loader.js'
 export { inspectCchOrder } from './domains/cch/inspect-cch-order.js'
+export { executeFixtureCchInspection } from './domains/cch/execute-fixture-cch-inspection.js'
 export { analyzePaymentIntent } from './domains/payment-intent/analyze-payment-intent.js'
 export { planRebalance } from './domains/rebalance/plan-rebalance.js'
 export { buildPaymentTimeline } from './domains/payment-timeline/build-payment-timeline.js'
 export { explainPayment } from './domains/payment-timeline/explain-payment.js'
+export { executeFixturePaymentExplanation } from './domains/payment-timeline/execute-fixture-payment-explanation.js'
 export { checkReadiness } from './domains/readiness/check-readiness.js'
+export { executeFixtureReadiness } from './domains/readiness/execute-fixture-readiness.js'
 export { createFiberRpcClient } from './rpc/fiber-client.js'
 export {
   normalizeFiberChannels,

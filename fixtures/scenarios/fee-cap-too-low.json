@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "fee-cap-too-low",
+  "title": "Fee cap too low",
+  "description": "The route fee exceeds the configured fee cap for the payment.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "readiness": {
+      "node": {
+        "nodeName": "fiber-node",
+        "peerId": "self",
+        "network": "testnet",
+        "graphSynced": true,
+        "blockHeight": "42"
+      },
+      "peers": [
+        {
+          "peerId": "peer-1",
+          "connected": true
+        }
+      ],
+      "channels": [
+        {
+          "channelId": "channel-1",
+          "state": "CHANNEL_READY",
+          "localBalance": "1000",
+          "remoteBalance": "900",
+          "assetId": "CKB",
+          "peerId": "peer-1"
+        }
+      ],
+      "routeAvailable": true,
+      "targetPeerId": "peer-1",
+      "routeFee": "150",
+      "feeCap": "100"
+    }
+  },
+  "expected": {
+    "diagnostics": ["FEE_CAP_TOO_LOW"]
+  }
+}

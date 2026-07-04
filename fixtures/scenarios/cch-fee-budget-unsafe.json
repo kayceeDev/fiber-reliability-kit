@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "cch-fee-budget-unsafe",
+  "title": "CCH fee budget unsafe",
+  "description": "The cross-chain order fee budget is below the minimum safe budget.",
+  "input": {
+    "intent": {
+      "kind": "manual",
+      "amount": "100000000",
+      "assetId": "CKB",
+      "targetPubkey": "0xpeer"
+    }
+  },
+  "context": {
+    "cch": {
+      "paymentHash": "0xfee",
+      "direction": "incoming",
+      "orderStatus": "PENDING",
+      "expiryDelta": 120,
+      "minSafeExpiryDelta": 60,
+      "feeBudget": "50",
+      "minSafeFeeBudget": "100"
+    }
+  },
+  "expected": {
+    "diagnostics": ["CCH_FEE_BUDGET_UNSAFE"]
+  }
+}

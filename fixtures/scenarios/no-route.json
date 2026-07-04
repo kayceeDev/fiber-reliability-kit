@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "no-route",
+  "title": "No route",
+  "description": "The graph is synced but there is no viable route for the payment.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "readiness": {
+      "node": {
+        "nodeName": "fiber-node",
+        "peerId": "self",
+        "network": "testnet",
+        "graphSynced": true,
+        "blockHeight": "42"
+      },
+      "peers": [
+        {
+          "peerId": "peer-1",
+          "connected": true
+        }
+      ],
+      "channels": [
+        {
+          "channelId": "channel-1",
+          "state": "CHANNEL_READY",
+          "localBalance": "1000",
+          "remoteBalance": "900",
+          "assetId": "CKB",
+          "peerId": "peer-1"
+        }
+      ],
+      "routeAvailable": false,
+      "targetPeerId": "peer-1"
+    }
+  },
+  "expected": {
+    "diagnostics": ["NO_ROUTE"]
+  }
+}

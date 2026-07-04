@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "payment-retryable-failure",
+  "title": "Payment retryable failure",
+  "description": "The latest payment attempt failed in a retryable way.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-05T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "paymentTimeline": {
+      "paymentHash": "0xretry",
+      "paymentFlow": "outbound",
+      "attempts": [
+        {
+          "id": "attempt-1",
+          "status": "FAILED_RETRYABLE",
+          "startedAtIso": "2026-07-04T00:00:00.000Z",
+          "finishedAtIso": "2026-07-04T00:00:05.000Z",
+          "failureReason": "Temporary route failure"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "diagnostics": ["PAYMENT_RETRYABLE_FAILURE"]
+  }
+}

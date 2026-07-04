@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "insufficient-inbound-liquidity",
+  "title": "Insufficient inbound liquidity",
+  "description": "The receiver side does not have enough inbound liquidity to accept the invoice amount.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "readiness": {
+      "node": {
+        "nodeName": "fiber-node",
+        "peerId": "self",
+        "network": "testnet",
+        "graphSynced": true,
+        "blockHeight": "42"
+      },
+      "peers": [
+        {
+          "peerId": "peer-1",
+          "connected": true
+        }
+      ],
+      "channels": [
+        {
+          "channelId": "channel-1",
+          "state": "CHANNEL_READY",
+          "localBalance": "1000",
+          "remoteBalance": "600",
+          "assetId": "CKB",
+          "peerId": "peer-1"
+        }
+      ],
+      "routeAvailable": true,
+      "targetPeerId": "peer-1"
+    }
+  },
+  "expected": {
+    "diagnostics": ["INSUFFICIENT_INBOUND_LIQUIDITY"]
+  }
+}

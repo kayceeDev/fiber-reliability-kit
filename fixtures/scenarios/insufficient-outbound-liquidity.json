@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "insufficient-outbound-liquidity",
+  "title": "Insufficient outbound liquidity",
+  "description": "The payer does not have enough local balance to send the invoice amount.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "readiness": {
+      "node": {
+        "nodeName": "fiber-node",
+        "peerId": "self",
+        "network": "testnet",
+        "graphSynced": true,
+        "blockHeight": "42"
+      },
+      "peers": [
+        {
+          "peerId": "peer-1",
+          "connected": true
+        }
+      ],
+      "channels": [
+        {
+          "channelId": "channel-1",
+          "state": "CHANNEL_READY",
+          "localBalance": "600",
+          "remoteBalance": "900",
+          "assetId": "CKB",
+          "peerId": "peer-1"
+        }
+      ],
+      "routeAvailable": true,
+      "targetPeerId": "peer-1"
+    }
+  },
+  "expected": {
+    "diagnostics": ["INSUFFICIENT_OUTBOUND_LIQUIDITY"]
+  }
+}

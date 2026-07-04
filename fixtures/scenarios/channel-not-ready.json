@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "channel-not-ready",
+  "title": "Channel not ready",
+  "description": "The target peer channel is still negotiating and cannot forward payments yet.",
+  "input": {
+    "intent": {
+      "kind": "invoice",
+      "invoice": "fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z"
+    }
+  },
+  "context": {
+    "readiness": {
+      "node": {
+        "nodeName": "fiber-node",
+        "peerId": "self",
+        "network": "testnet",
+        "graphSynced": true,
+        "blockHeight": "42"
+      },
+      "peers": [
+        {
+          "peerId": "peer-1",
+          "connected": true
+        }
+      ],
+      "channels": [
+        {
+          "channelId": "channel-1",
+          "state": "CHANNEL_PENDING",
+          "localBalance": "1000",
+          "remoteBalance": "900",
+          "assetId": "CKB",
+          "peerId": "peer-1"
+        }
+      ],
+      "routeAvailable": true,
+      "targetPeerId": "peer-1"
+    }
+  },
+  "expected": {
+    "diagnostics": ["CHANNEL_NOT_READY"]
+  }
+}

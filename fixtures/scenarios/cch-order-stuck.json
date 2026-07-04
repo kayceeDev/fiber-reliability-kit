@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "cch-order-stuck",
+  "title": "CCH order stuck",
+  "description": "The cross-chain order is still inflight and requires operator attention.",
+  "input": {
+    "intent": {
+      "kind": "manual",
+      "amount": "100000000",
+      "assetId": "CKB",
+      "targetPubkey": "0xpeer"
+    }
+  },
+  "context": {
+    "cch": {
+      "paymentHash": "0xstuck",
+      "direction": "outgoing",
+      "orderStatus": "IN_FLIGHT",
+      "expiryDelta": 120,
+      "minSafeExpiryDelta": 60,
+      "feeBudget": "200",
+      "minSafeFeeBudget": "100"
+    }
+  },
+  "expected": {
+    "diagnostics": ["CCH_ORDER_STUCK"]
+  }
+}

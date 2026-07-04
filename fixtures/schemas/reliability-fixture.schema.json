@@ -67,6 +67,65 @@
       },
       "additionalProperties": false
     },
+    "context": {
+      "type": "object",
+      "properties": {
+        "readiness": {
+          "type": "object",
+          "required": ["node", "peers", "channels", "routeAvailable", "targetPeerId"],
+          "properties": {
+            "node": {
+              "type": "object",
+              "required": ["nodeName", "peerId", "network", "graphSynced", "blockHeight"],
+              "properties": {
+                "nodeName": { "type": "string", "minLength": 1 },
+                "peerId": { "type": "string", "minLength": 1 },
+                "network": { "enum": ["mainnet", "testnet", "devnet"] },
+                "graphSynced": { "type": "boolean" },
+                "blockHeight": { "type": "string", "minLength": 1 }
+              },
+              "additionalProperties": false
+            },
+            "peers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["peerId", "connected"],
+                "properties": {
+                  "peerId": { "type": "string", "minLength": 1 },
+                  "connected": { "type": "boolean" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "channels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["channelId", "state", "localBalance", "remoteBalance", "assetId", "peerId"],
+                "properties": {
+                  "channelId": { "type": "string", "minLength": 1 },
+                  "state": { "type": "string", "minLength": 1 },
+                  "localBalance": { "type": "string", "minLength": 1 },
+                  "remoteBalance": { "type": "string", "minLength": 1 },
+                  "assetId": { "type": "string", "minLength": 1 },
+                  "peerId": { "type": "string", "minLength": 1 }
+                },
+                "additionalProperties": false
+              }
+            },
+            "routeAvailable": { "type": "boolean" },
+            "targetPeerId": { "type": "string", "minLength": 1 },
+            "routeFee": { "type": "string" },
+            "feeCap": { "type": "string" },
+            "routeExpiryDelta": { "type": "number" },
+            "minSafeExpiryDelta": { "type": "number" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "expected": {
       "type": "object",
       "required": ["diagnostics"],
