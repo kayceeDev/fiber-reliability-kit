@@ -3,20 +3,20 @@ import { describe, expect, it } from 'vitest'
 import { executeCliCommand } from '../../src/index.js'
 
 describe('fiber-doctor command execution', () => {
-  it('renders can-pay fixture output as JSON when requested', async () => {
+  it('renders can-pay fixture output as computed JSON when requested', async () => {
     const output = await executeCliCommand([
       'can-pay',
       'fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z',
       '--json',
       '--fixture',
-      'invoice-missing-amount'
+      'graph-not-synced'
     ])
 
     const parsed = JSON.parse(output)
 
     expect(parsed.command).toBe('can-pay')
-    expect(parsed.fixtureId).toBe('invoice-missing-amount')
-    expect(parsed.diagnostics).toEqual(['INVOICE_AMOUNT_MISSING'])
+    expect(parsed.fixtureId).toBe('graph-not-synced')
+    expect(parsed.diagnostics).toEqual(['GRAPH_NOT_SYNCED'])
   })
 
   it('renders can-pay fixture output as human-readable text by default', async () => {
@@ -24,34 +24,35 @@ describe('fiber-doctor command execution', () => {
       'can-pay',
       'fiber-fixture:network=testnet;asset=CKB;amount=700;expiresAt=2026-07-04T00:00:00.000Z',
       '--fixture',
-      'invoice-missing-amount'
+      'graph-not-synced'
     ])
 
     expect(output).toContain('fiber-doctor can-pay')
-    expect(output).toContain('invoice-missing-amount')
-    expect(output).toContain('INVOICE_AMOUNT_MISSING')
+    expect(output).toContain('graph-not-synced')
+    expect(output).toContain('GRAPH_NOT_SYNCED')
   })
 
-  it('renders node-health as JSON with rpc metadata when requested', async () => {
+  it('renders node-health as computed JSON from a readiness fixture when requested', async () => {
     const output = await executeCliCommand([
       'node-health',
       '--json',
-      '--rpc-url',
-      'http://127.0.0.1:8227'
+      '--fixture',
+      'happy-payment'
     ])
 
     const parsed = JSON.parse(output)
 
     expect(parsed.command).toBe('node-health')
-    expect(parsed.rpcUrl).toBe('http://127.0.0.1:8227')
-    expect(parsed.mode).toBe('rpc')
+    expect(parsed.fixtureId).toBe('happy-payment')
+    expect(parsed.diagnostics).toEqual([])
   })
 
   it('renders node-health as human-readable text by default', async () => {
-    const output = await executeCliCommand(['node-health'])
+    const output = await executeCliCommand(['node-health', '--fixture', 'graph-not-synced'])
 
     expect(output).toContain('fiber-doctor node-health')
-    expect(output).toContain('mode: fixtureless')
+    expect(output).toContain('graph-not-synced')
+    expect(output).toContain('GRAPH_NOT_SYNCED')
   })
 
   it('rejects can-pay invocations that omit the invoice argument', async () => {
