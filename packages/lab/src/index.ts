@@ -1,5 +1,6 @@
 export const labPackageName = 'fiber-reliability-lab'
 
+export { getLabScenarioManifest, type LabScenarioManifestEntry } from './data/scenario-manifest.js'
 export {
   createScenarioPickerState,
   listFixtureScenarios,

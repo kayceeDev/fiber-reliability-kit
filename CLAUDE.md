@@ -520,6 +520,31 @@ Commit message:
 docs: finalize product completion and submission positioning
 ```
 
+### Milestone 5F: Browser-Packaged Reliability Lab
+
+Define:
+
+- Move the Lab from a packaged HTML shell toward a browser-deliverable app surface.
+- Replace Node-only scenario enumeration with a browser-safe scenario manifest.
+- Introduce browser-ready entry/build wiring while keeping the Lab fixture-first and local-RPC safe.
+
+Automated tests:
+
+- Scenario manifest integrity tests.
+- Browser-safe scenario loading tests.
+- Browser app shell rendering or build smoke tests.
+
+Manual verification:
+
+- Confirm the Lab can be packaged as a browser-facing surface without losing fixture-driven behavior.
+- Confirm local RPC remains explicitly opt-in and localhost-only.
+
+Commit message:
+
+```text
+lab: package browser-facing Reliability Lab
+```
+
 ## Test Plan
 
 Automated tests must cover:
