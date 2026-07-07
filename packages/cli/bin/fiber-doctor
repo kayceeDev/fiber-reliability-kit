@@ -4,4 +4,5 @@ set -euo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "$0")" && pwd)
 CLI_DIR=$(cd -- "$SCRIPT_DIR/.." && pwd)
 
-exec "$CLI_DIR/node_modules/.bin/tsx" "$CLI_DIR/src/bin.ts" "$@"
+cd "$CLI_DIR"
+exec node --import tsx src/bin.ts "$@"

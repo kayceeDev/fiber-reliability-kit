@@ -12,13 +12,15 @@ describe('browser-packaged Lab interactivity', () => {
     const html = await readLabFile('index.html')
 
     expect(html).toContain('id="scenario-select"')
-    expect(html).toContain('<label for="scenario-select">Scenario</label>')
+    expect(html).toContain('for="scenario-select"')
+    expect(html).toContain('sr-only')
   })
 
   it('wires change handling in the browser entry module', async () => {
     const main = await readLabFile('src/browser/main.ts')
 
     expect(main).toContain('scenarioSelect.addEventListener')
+    expect(main).toContain('data-scenario-id')
     expect(main).toContain('renderScenario')
   })
 
@@ -26,6 +28,6 @@ describe('browser-packaged Lab interactivity', () => {
     const main = await readLabFile('src/browser/main.ts')
 
     expect(main).toContain('scenarioSelect.value')
-    expect(main).toContain('renderReliabilityLabDocument')
+    expect(main).toContain('renderReliabilityLabApp')
   })
 })

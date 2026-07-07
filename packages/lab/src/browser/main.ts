@@ -1,18 +1,25 @@
-import { renderReliabilityLabDocument } from '../app/render-lab-document.js'
+import './styles.css'
+
+import { renderReliabilityLabApp } from '../app/render-lab-app.js'
 import { getLabScenarioManifest } from '../data/scenario-manifest.js'
 
 async function renderScenario(scenarioId: string) {
   const mount = document.getElementById('app')
+  const scenarioSelect = document.getElementById('scenario-select') as HTMLSelectElement | null
 
   if (!mount) {
     throw new Error('Reliability Lab mount point #app was not found.')
   }
 
-  const html = await renderReliabilityLabDocument({
+  const html = await renderReliabilityLabApp({
     scenarioId
   })
 
   mount.innerHTML = html
+
+  if (scenarioSelect && scenarioSelect.value !== scenarioId) {
+    scenarioSelect.value = scenarioId
+  }
 }
 
 async function bootstrapLab() {
@@ -37,6 +44,23 @@ async function bootstrapLab() {
 
   scenarioSelect.addEventListener('change', async () => {
     await renderScenario(scenarioSelect.value)
+  })
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target
+
+    if (!(target instanceof Element)) {
+      return
+    }
+
+    const scenarioButton = target.closest<HTMLElement>('[data-scenario-id]')
+    const scenarioId = scenarioButton?.dataset.scenarioId
+
+    if (!scenarioId) {
+      return
+    }
+
+    await renderScenario(scenarioId)
   })
 }
 

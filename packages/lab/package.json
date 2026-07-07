@@ -10,6 +10,8 @@
     "@fiber-reliability/sdk": "workspace:*"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.2",
+    "tailwindcss": "^4.3.2",
     "vite": "^7.3.6"
   },
   "scripts": {

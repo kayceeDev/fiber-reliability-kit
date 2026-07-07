@@ -8,6 +8,16 @@ async function readLabFile(relativePath: string): Promise<string> {
 }
 
 describe('browser-packaged Lab entry', () => {
+  it('adds Tailwind dependencies and Vite plugin configuration to the Lab package', async () => {
+    const packageJson = await readLabFile('package.json')
+    const viteConfig = await readLabFile('vite.config.ts')
+
+    expect(packageJson).toContain('"tailwindcss"')
+    expect(packageJson).toContain('"@tailwindcss/vite"')
+    expect(viteConfig).toContain('@tailwindcss/vite')
+    expect(viteConfig).toContain('tailwindcss()')
+  })
+
   it('adds browser-oriented dev, build, and preview scripts to the Lab package', async () => {
     const packageJson = await readLabFile('package.json')
 
@@ -24,10 +34,18 @@ describe('browser-packaged Lab entry', () => {
     expect(html).toContain('src/browser/main.ts')
   })
 
-  it('adds a browser entry module that renders the packaged Lab document', async () => {
+  it('adds a browser entry module that renders the packaged Lab app and imports Tailwind styles', async () => {
     const main = await readLabFile('src/browser/main.ts')
 
-    expect(main).toContain('renderReliabilityLabDocument')
+    expect(main).toContain("import './styles.css'")
+    expect(main).toContain('renderReliabilityLabApp')
     expect(main).toContain('document.getElementById')
+  })
+
+  it('adds a Tailwind stylesheet entrypoint', async () => {
+    const styles = await readLabFile('src/browser/styles.css')
+
+    expect(styles).toContain('@import "tailwindcss";')
+    expect(styles).toContain('font-family')
   })
 })

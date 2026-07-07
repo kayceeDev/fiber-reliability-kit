@@ -3,26 +3,31 @@ import { describe, expect, it } from 'vitest'
 import { renderReliabilityLabApp } from '../../src/index.js'
 
 describe('renderReliabilityLabApp', () => {
-  it('renders a scenario picker with the current selected scenario and section headings', async () => {
+  it('renders a responsive Lab shell with a scenario rail and active scenario state', async () => {
     const html = await renderReliabilityLabApp({
       scenarioId: 'graph-not-synced'
     })
 
-    expect(html).toContain('Fiber Reliability Lab')
-    expect(html).toContain('Scenario picker')
+    expect(html).toContain('data-testid="lab-shell"')
+    expect(html).toContain('lg:grid-cols-[320px_minmax(0,1fr)]')
+    expect(html).toContain('Scenario library')
     expect(html).toContain('graph-not-synced')
-    expect(html).toContain('Selected scenario')
+    expect(html).toContain('aria-current="true"')
   })
 
-  it('renders diagnostic cards, recovery actions, and evidence placeholders for the selected scenario', async () => {
+  it('renders styled diagnostic cards, severity badges, recovery actions, and evidence rows', async () => {
     const html = await renderReliabilityLabApp({
       scenarioId: 'graph-not-synced'
     })
 
+    expect(html).toContain('data-testid="diagnostic-card"')
+    expect(html).toContain('rounded-2xl')
     expect(html).toContain('GRAPH_NOT_SYNCED')
-    expect(html).toContain('warning')
+    expect(html).toContain('Warning')
+    expect(html).toContain('bg-amber-100')
     expect(html).toContain('Wait for sync')
     expect(html).toContain('Evidence')
+    expect(html).toContain('Recovery actions')
   })
 
   it('renders the payment explanation panel with timeline entries when a payment explanation is requested', async () => {
@@ -34,10 +39,10 @@ describe('renderReliabilityLabApp', () => {
     expect(html).toContain('Payment explanation')
     expect(html).toContain('PAYMENT_SUCCEEDED')
     expect(html).toContain('Timeline events')
-    expect(html).toContain('succeeded')
+    expect(html).toContain('data-testid="payment-timeline-panel"')
   })
 
-  it('renders the route and liquidity panel with asset and diagnostic details when a readiness scenario is selected', async () => {
+  it('renders the route and liquidity panel with asset and diagnostic pills when a readiness scenario is selected', async () => {
     const html = await renderReliabilityLabApp({
       scenarioId: 'insufficient-outbound-liquidity'
     })
@@ -45,16 +50,17 @@ describe('renderReliabilityLabApp', () => {
     expect(html).toContain('Route and liquidity')
     expect(html).toContain('INSUFFICIENT_OUTBOUND_LIQUIDITY')
     expect(html).toContain('CKB')
-    expect(html).toContain('Diagnostic codes')
+    expect(html).toContain('data-testid="route-liquidity-panel"')
   })
 
-  it('renders a clearer mocked-vs-local data mode section and keeps fixture-only mode by default', async () => {
+  it('renders a polished mocked-vs-local data mode banner and keeps fixture-only mode by default', async () => {
     const html = await renderReliabilityLabApp({
       scenarioId: 'happy-payment'
     })
 
-    expect(html).toContain('Data mode')
+    expect(html).toContain('data-testid="data-mode-banner"')
     expect(html).toContain('Mocked fixture data only')
-    expect(html).toContain('Local RPC status')
+    expect(html).toContain('Local RPC disabled')
+    expect(html).toContain('bg-emerald-50')
   })
 })
