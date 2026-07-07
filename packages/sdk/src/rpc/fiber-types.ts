@@ -1,6 +1,6 @@
 import type { FiberNetwork } from '../domains/payment-intent/types.js'
 
-export type FiberJsonRpcMethod = 'node_info' | 'list_peers' | 'list_channels'
+export type FiberJsonRpcMethod = 'node_info' | 'list_peers' | 'list_channels' | 'parse_invoice'
 
 export type FiberRpcTransport = {
   send(method: FiberJsonRpcMethod, params?: unknown): Promise<unknown>

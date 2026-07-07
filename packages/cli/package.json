@@ -3,13 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "fiber-doctor": "./bin/fiber-doctor"
+  },
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
     "@fiber-reliability/sdk": "workspace:*"
   },
+  "devDependencies": {
+    "tsx": "^4.20.5"
+  },
   "scripts": {
+    "doctor": "tsx src/bin.ts",
     "typecheck": "tsc -p tsconfig.json"
   }
 }

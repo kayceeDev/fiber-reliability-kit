@@ -90,14 +90,21 @@ function parseFixtureInvoice(invoice: string): ParsedInvoice | null {
   }
 }
 
-function analyzeInvoiceIntent(input: InvoiceAnalysisInput, intent: Extract<PaymentIntent, { kind: 'invoice' }>): InvoiceAnalysisReport {
-  const invoice = parseFixtureInvoice(intent.invoice)
-
+function analyzeParsedInvoice(
+  input: InvoiceAnalysisInput,
+  intent: Extract<PaymentIntent, { kind: 'invoice' }>,
+  invoice: ParsedInvoice | null
+): InvoiceAnalysisReport {
   if (!invoice) {
     return {
       intent,
       invoice: null,
-      diagnostics: [createDiagnostic('MALFORMED_INVOICE', 'Invoice could not be parsed by the current invoice analysis boundary.')]
+      diagnostics: [
+        createDiagnostic(
+          'MALFORMED_INVOICE',
+          'Invoice could not be parsed by the current invoice analysis boundary.'
+        )
+      ]
     }
   }
 
@@ -138,6 +145,62 @@ function analyzeInvoiceIntent(input: InvoiceAnalysisInput, intent: Extract<Payme
     invoice,
     diagnostics
   }
+}
+
+export function parseInvoiceFromRpcResult(
+  rawInvoice: string,
+  rpcResult: {
+    invoice?: {
+      currency?: string
+      amount?: string | null
+      data?: {
+        attrs?: {
+          expiry_time?: string
+          udt_script?: string
+        }
+      }
+    }
+  }
+): ParsedInvoice | null {
+  const invoice = rpcResult.invoice
+
+  if (!invoice?.currency || !invoice.data?.attrs?.expiry_time) {
+    return null
+  }
+
+  const network =
+    invoice.currency === 'Fibb'
+      ? 'mainnet'
+      : invoice.currency === 'Fibt'
+        ? 'testnet'
+        : invoice.currency === 'Fibd'
+          ? 'devnet'
+          : null
+
+  if (!network) {
+    return null
+  }
+
+  const asset = invoice.data.attrs.udt_script
+    ? {
+        kind: 'UDT' as const,
+        assetId: invoice.data.attrs.udt_script
+      }
+    : {
+        kind: 'CKB' as const
+      }
+
+  return {
+    raw: rawInvoice,
+    network,
+    asset,
+    amount: invoice.amount ?? null,
+    expiresAtIso: invoice.data.attrs.expiry_time
+  }
+}
+
+function analyzeInvoiceIntent(input: InvoiceAnalysisInput, intent: Extract<PaymentIntent, { kind: 'invoice' }>): InvoiceAnalysisReport {
+  return analyzeParsedInvoice(input, intent, parseFixtureInvoice(intent.invoice))
 }
 
 export function analyzePaymentIntent(input: InvoiceAnalysisInput): InvoiceAnalysisReport {

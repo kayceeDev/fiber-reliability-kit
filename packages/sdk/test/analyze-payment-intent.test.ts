@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { analyzePaymentIntent, type PaymentIntent } from '../src/index.js'
+import {
+  analyzePaymentIntent,
+  parseInvoiceFromRpcResult,
+  type PaymentIntent
+} from '../src/index.js'
 
 describe('analyzePaymentIntent', () => {
   it('classifies unsupported invoice strings as malformed invoices', () => {
@@ -98,5 +102,50 @@ describe('analyzePaymentIntent', () => {
       assetId: '0xudt-asset'
     })
     expect(udtReport.diagnostics).toEqual([])
+  })
+
+  it('adapts a parse_invoice RPC result into the shared ParsedInvoice shape', () => {
+    const parsed = parseInvoiceFromRpcResult('fibtest1realinvoice', {
+      invoice: {
+        currency: 'Fibt',
+        amount: '700',
+        data: {
+          attrs: {
+            expiry_time: '2026-07-05T00:00:00.000Z'
+          }
+        }
+      }
+    })
+
+    expect(parsed).toEqual({
+      raw: 'fibtest1realinvoice',
+      network: 'testnet',
+      asset: {
+        kind: 'CKB'
+      },
+      amount: '700',
+      expiresAtIso: '2026-07-05T00:00:00.000Z'
+    })
+  })
+
+  it('detects a UDT asset from parse_invoice RPC attributes', () => {
+    const parsed = parseInvoiceFromRpcResult('fibtest1udtinvoice', {
+      invoice: {
+        currency: 'Fibd',
+        amount: '700',
+        data: {
+          attrs: {
+            expiry_time: '2026-07-05T00:00:00.000Z',
+            udt_script: '0xudt-asset'
+          }
+        }
+      }
+    })
+
+    expect(parsed?.asset).toEqual({
+      kind: 'UDT',
+      assetId: '0xudt-asset'
+    })
+    expect(parsed?.network).toBe('devnet')
   })
 })

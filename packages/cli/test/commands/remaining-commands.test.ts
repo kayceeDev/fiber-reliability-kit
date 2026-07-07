@@ -92,4 +92,14 @@ describe('fiber-doctor remaining command execution', () => {
       'cch requires a payment hash argument'
     )
   })
+
+  it('rejects unsupported explain-payment and cch requests instead of fabricating synthetic fallbacks', async () => {
+    await expect(executeCliCommand(['explain-payment', '0xunknown'])).rejects.toThrow(
+      'explain-payment currently supports fixture-backed known payment scenarios only.'
+    )
+
+    await expect(executeCliCommand(['cch', '0xunknown'])).rejects.toThrow(
+      'cch currently supports fixture-backed known CCH scenarios only.'
+    )
+  })
 })

@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises'
-
 import { z } from 'zod'
 
 import { diagnosticCodes, type DiagnosticCode } from '../diagnostics/types.js'
@@ -113,13 +111,11 @@ const fixtureSchema = z.object({
   })
 })
 
-export async function loadReliabilityFixture(path: URL | string): Promise<ReliabilityFixture> {
-  const fileContents = await readFile(path, 'utf8')
-  const parsedFixture = JSON.parse(fileContents) as unknown
+export function parseReliabilityFixtureData(parsedFixture: unknown): ReliabilityFixture {
   const result = fixtureSchema.safeParse(parsedFixture)
 
   if (result.success) {
-    return result.data
+    return result.data as ReliabilityFixture
   }
 
   const firstIssue = result.error.issues[0]
@@ -129,4 +125,12 @@ export async function loadReliabilityFixture(path: URL | string): Promise<Reliab
   }
 
   throw new Error(firstIssue.message)
+}
+
+export async function loadReliabilityFixture(path: URL | string): Promise<ReliabilityFixture> {
+  const { readFile } = await import('node:fs/promises')
+  const fileContents = await readFile(path, 'utf8')
+  const parsedFixture = JSON.parse(fileContents) as unknown
+
+  return parseReliabilityFixtureData(parsedFixture)
 }

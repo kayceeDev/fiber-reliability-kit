@@ -1,5 +1,6 @@
 import {
   analyzePaymentIntent,
+  createFiberRpcClient,
   diagnosticMetadataByCode,
   executeFixtureCchInspection,
   executeFixturePaymentExplanation,
@@ -7,8 +8,11 @@ import {
   explainPayment,
   inspectCchOrder,
   loadReliabilityFixture,
+  parseInvoiceFromRpcResult,
   type DiagnosticCode,
-  type DiagnosticSeverity
+  type DiagnosticSeverity,
+  type FiberJsonRpcMethod,
+  type FiberRpcTransport
 } from '@fiber-reliability/sdk'
 
 import { createCliShell } from './cli-shell.js'
@@ -155,9 +159,61 @@ function toExitCode(diagnostics: readonly DiagnosticCode[]): 0 | 1 | 2 | 3 {
   return 0
 }
 
+function analyzeParsedInvoiceForCli(parsedInvoice: {
+  raw: string
+  network: 'mainnet' | 'testnet' | 'devnet'
+  asset: { kind: 'CKB' } | { kind: 'UDT'; assetId: string }
+  amount: string | null
+  expiresAtIso: string
+}) {
+  const diagnostics = analyzePaymentIntent({
+    intent: {
+      kind: 'invoice',
+      invoice: `fiber-fixture:network=${parsedInvoice.network};asset=${parsedInvoice.asset.kind === 'CKB' ? 'CKB' : `UDT:${parsedInvoice.asset.assetId}`};${parsedInvoice.amount === null ? '' : `amount=${parsedInvoice.amount};`}expiresAt=${parsedInvoice.expiresAtIso}`
+    },
+    nowIso: '2026-07-04T00:00:00.000Z'
+  }).diagnostics
+
+  return diagnostics
+}
+
+function createHttpJsonRpcTransport(rpcUrl: string): FiberRpcTransport {
+  return {
+    async send(method: FiberJsonRpcMethod, params?: unknown) {
+      const response = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method,
+          params
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`Fiber RPC request failed: ${response.status}`)
+      }
+
+      const payload = (await response.json()) as {
+        error?: { message?: string }
+        result?: unknown
+      }
+
+      if (payload.error) {
+        throw new Error(payload.error.message ?? 'Fiber RPC request returned an error.')
+      }
+
+      return payload.result
+    }
+  }
+}
+
 async function executeCanPay(
   args: string[],
-  options: { json: boolean; fixture: string | undefined }
+  options: { json: boolean; fixture: string | undefined; rpcUrl: string | undefined }
 ): Promise<CommandRenderResult> {
   const [invoice] = args
 
@@ -185,6 +241,27 @@ async function executeCanPay(
         nowIso: '2026-07-04T00:00:00.000Z'
       }).diagnostics.map((diagnostic) => diagnostic.code)
     }
+  } else if (options.rpcUrl) {
+    const transport = createHttpJsonRpcTransport(options.rpcUrl)
+    const rpcResult = await transport.send('parse_invoice', { invoice })
+    const parsedInvoice = parseInvoiceFromRpcResult(invoice, rpcResult as {
+      invoice?: {
+        currency?: string
+        amount?: string | null
+        data?: { attrs?: { expiry_time?: string; udt_script?: string } }
+      }
+    })
+
+    diagnostics = (parsedInvoice
+      ? analyzeParsedInvoiceForCli(parsedInvoice)
+      : analyzePaymentIntent({
+          intent: {
+            kind: 'invoice',
+            invoice
+          },
+          nowIso: '2026-07-04T00:00:00.000Z'
+        }).diagnostics
+    ).map((diagnostic) => diagnostic.code)
   }
 
   const output: CanPayJsonOutput = {
@@ -220,6 +297,27 @@ async function executeNodeHealth(
         (diagnostic) => diagnostic.code
       )
     }
+  } else if (options.rpcUrl) {
+    const client = createFiberRpcClient(createHttpJsonRpcTransport(options.rpcUrl))
+    const node = await client.getNodeInfo()
+    const peers = await client.listPeers()
+    const channels = await client.listChannels()
+
+    if (!node.graphSynced) {
+      diagnostics.push('GRAPH_NOT_SYNCED')
+    }
+
+    const hasClosedChannel = channels.some((channel) => channel.state === 'CHANNEL_CLOSED')
+
+    if (hasClosedChannel) {
+      diagnostics.push('CHANNEL_CLOSED')
+    }
+
+    const hasNoConnectedPeers = peers.length === 0 || peers.every((peer) => !peer.connected)
+
+    if (hasNoConnectedPeers) {
+      diagnostics.push('PEER_NOT_CONNECTED')
+    }
   }
 
   const output: NodeHealthJsonOutput = {
@@ -238,8 +336,7 @@ async function executeNodeHealth(
 }
 
 async function executeExplainPayment(
-  args: string[],
-  options: { json: boolean }
+  args: string[]
 ): Promise<CommandRenderResult> {
   const [paymentHash] = args
 
@@ -260,21 +357,13 @@ async function executeExplainPayment(
       )
     : undefined
 
-  const report = fixture?.context?.paymentTimeline
-    ? executeFixturePaymentExplanation(fixture)
-    : explainPayment({
-        paymentHash,
-        paymentFlow: 'outbound',
-        attempts: [
-          {
-            id: 'attempt-1',
-            status: 'FAILED_TERMINAL',
-            startedAtIso: '2026-07-04T00:00:00.000Z',
-            finishedAtIso: '2026-07-04T00:00:05.000Z',
-            failureReason: 'Invoice rejected'
-          }
-        ]
-      })
+  if (!fixture?.context?.paymentTimeline) {
+    throw new Error(
+      'explain-payment currently supports fixture-backed known payment scenarios only.'
+    )
+  }
+
+  const report = executeFixturePaymentExplanation(fixture)
 
   const diagnostics = report.diagnostics.map((diagnostic) => diagnostic.code)
   const output: ExplainPaymentJsonOutput = {
@@ -314,17 +403,11 @@ async function executeCch(
     fixtureId = fixture.id
   }
 
-  const report = fixture?.context?.cch
-    ? executeFixtureCchInspection(fixture)
-    : inspectCchOrder({
-        paymentHash,
-        direction: 'incoming',
-        orderStatus: 'PENDING',
-        expiryDelta: 120,
-        minSafeExpiryDelta: 60,
-        feeBudget: '200',
-        minSafeFeeBudget: '100'
-      })
+  if (!fixture?.context?.cch) {
+    throw new Error('cch currently supports fixture-backed known CCH scenarios only.')
+  }
+
+  const report = executeFixtureCchInspection(fixture)
 
   const diagnostics = report.diagnostics.map((diagnostic) => diagnostic.code)
   const output: CchJsonOutput = {
@@ -398,7 +481,7 @@ export async function executeCliCommandDetailed(argv: string[]): Promise<CliExec
       : invocation.command === 'node-health'
         ? await executeNodeHealth(invocation.options)
         : invocation.command === 'explain-payment'
-          ? await executeExplainPayment(invocation.args, invocation.options)
+          ? await executeExplainPayment(invocation.args)
           : invocation.command === 'cch'
             ? await executeCch(invocation.args, invocation.options)
             : invocation.command === 'liquidity'

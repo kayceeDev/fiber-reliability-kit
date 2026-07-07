@@ -17,10 +17,17 @@ export {
   type CreateDiagnosticOptions,
   type DiagnosticMetadata
 } from './domains/diagnostics/taxonomy.js'
-export { fixtureSchemaVersion, loadReliabilityFixture } from './domains/fixture/loader.js'
+export {
+  fixtureSchemaVersion,
+  loadReliabilityFixture,
+  parseReliabilityFixtureData
+} from './domains/fixture/loader.js'
 export { inspectCchOrder } from './domains/cch/inspect-cch-order.js'
 export { executeFixtureCchInspection } from './domains/cch/execute-fixture-cch-inspection.js'
-export { analyzePaymentIntent } from './domains/payment-intent/analyze-payment-intent.js'
+export {
+  analyzePaymentIntent,
+  parseInvoiceFromRpcResult
+} from './domains/payment-intent/analyze-payment-intent.js'
 export { planRebalance } from './domains/rebalance/plan-rebalance.js'
 export { buildPaymentTimeline } from './domains/payment-timeline/build-payment-timeline.js'
 export { explainPayment } from './domains/payment-timeline/explain-payment.js'
