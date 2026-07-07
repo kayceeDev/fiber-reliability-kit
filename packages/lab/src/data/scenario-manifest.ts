@@ -1,5 +1,7 @@
+import type { BrowserScenarioId } from './scenario-fixtures.js'
+
 export type LabScenarioManifestEntry = {
-  id: string
+  id: BrowserScenarioId
   title: string
   description: string
 }

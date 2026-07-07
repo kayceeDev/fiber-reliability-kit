@@ -1,5 +1,6 @@
-import { loadReliabilityFixture, type ReliabilityFixture } from '@fiber-reliability/sdk'
+import type { ReliabilityFixture } from '@fiber-reliability/sdk'
 
+import { getBrowserScenarioFixture } from '../data/scenario-fixtures.js'
 import { getLabScenarioManifest } from '../data/scenario-manifest.js'
 
 export type ScenarioSummary = {
@@ -23,13 +24,7 @@ function toScenarioSummary(fixture: ReliabilityFixture): ScenarioSummary {
 
 export async function listFixtureScenarios(): Promise<ScenarioSummary[]> {
   const manifest = getLabScenarioManifest()
-  const scenarios = await Promise.all(
-    manifest.map((entry) =>
-      loadReliabilityFixture(
-        new URL(`../../../../fixtures/scenarios/${entry.id}.json`, import.meta.url)
-      )
-    )
-  )
+  const scenarios = manifest.map((entry) => getBrowserScenarioFixture(entry.id))
 
   return scenarios.map(toScenarioSummary)
 }

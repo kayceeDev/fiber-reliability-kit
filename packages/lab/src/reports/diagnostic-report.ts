@@ -3,7 +3,6 @@ import {
   executeFixtureCchInspection,
   executeFixturePaymentExplanation,
   executeFixtureReadiness,
-  loadReliabilityFixture,
   diagnosticMetadataByCode,
   type DiagnosticCode,
   type DiagnosticEvidence,
@@ -13,6 +12,8 @@ import {
   type RecoveryAction,
   type ReliabilityFixture
 } from '@fiber-reliability/sdk'
+
+import { getBrowserScenarioFixture } from '../data/scenario-fixtures.js'
 
 export type DiagnosticCardViewModel = {
   code: DiagnosticCode
@@ -69,9 +70,7 @@ export async function buildDiagnosticReport(
   let fixture: ReliabilityFixture
 
   try {
-    fixture = await loadReliabilityFixture(
-      new URL(`../../../../fixtures/scenarios/${scenarioId}.json`, import.meta.url)
-    )
+    fixture = getBrowserScenarioFixture(scenarioId as never)
   } catch {
     throw new Error(`Unknown lab scenario: ${scenarioId}`)
   }
