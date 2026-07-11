@@ -10,6 +10,10 @@ describe('renderReliabilityLabApp', () => {
 
     expect(html).toContain('data-testid="lab-shell"')
     expect(html).toContain('lg:grid-cols-[320px_minmax(0,1fr)]')
+    expect(html).toContain('data-testid="scenario-rail"')
+    expect(html).toContain('hidden rounded-3xl')
+    expect(html).toContain('lg:top-24')
+    expect(html).toContain('lg:max-h-[calc(100vh-7rem)]')
     expect(html).toContain('Scenario library')
     expect(html).toContain('graph-not-synced')
     expect(html).toContain('aria-current="true"')

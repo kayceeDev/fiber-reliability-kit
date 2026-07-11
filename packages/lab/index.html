@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Fiber Reliability Lab</title>
   </head>
-  <body class="min-h-screen bg-slate-100 text-slate-950 antialiased">
-    <div class="border-b border-white/70 bg-white/85 px-4 py-3 shadow-sm backdrop-blur sm:px-6 lg:px-8">
+  <body class="min-h-screen bg-slate-100 pt-40 text-slate-950 antialiased sm:pt-32 lg:pt-24">
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/70 bg-white/85 px-4 py-3 shadow-sm backdrop-blur sm:px-6 lg:px-8">
       <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p class="text-xs font-bold uppercase tracking-[0.22em] text-cyan-700">Fiber Reliability Lab</p>
           <p class="text-sm text-slate-600">Fixture-first diagnostics for payment readiness and recovery.</p>
         </div>
-        <label for="scenario-select" class="sr-only">Scenario</label>
-        <select
-          id="scenario-select"
-          class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 sm:w-80"
-        ></select>
+        <div class="grid gap-1 lg:hidden">
+          <label for="scenario-select" class="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Failure story</label>
+          <select
+            id="scenario-select"
+            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 sm:w-80 lg:hidden"
+          ></select>
+        </div>
       </div>
-    </div>
+    </header>
     <div id="app"></div>
     <script type="module" src="./src/browser/main.ts"></script>
   </body>

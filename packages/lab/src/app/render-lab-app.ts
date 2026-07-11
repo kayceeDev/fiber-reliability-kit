@@ -102,7 +102,7 @@ function renderScenarioRail(
   selectedScenarioId: string
 ): string {
   return [
-    '<aside class="rounded-3xl border border-white/70 bg-white/80 p-4 shadow-xl shadow-slate-200/60 backdrop-blur lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-auto">',
+    '<aside data-testid="scenario-rail" class="hidden rounded-3xl border border-white/70 bg-white/80 p-4 shadow-xl shadow-slate-200/60 backdrop-blur lg:sticky lg:top-24 lg:block lg:max-h-[calc(100vh-7rem)] lg:overflow-auto">',
     '<div class="mb-4">',
     '<p class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-700">Scenario library</p>',
     '<h2 class="mt-2 text-xl font-bold text-slate-950">Choose a failure story</h2>',
