@@ -5,7 +5,7 @@ import {
   type DiagnosticCode,
   type PaymentFailureKind,
   type PaymentTimelineEventKind
-} from '@fiber-reliability/sdk'
+} from '@nwobodoleonard/fiber-reliability-sdk'
 
 import { getBrowserScenarioFixture } from '../data/scenario-fixtures.js'
 

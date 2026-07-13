@@ -1,4 +1,4 @@
-# @fiber-reliability/sdk
+# @nwobodoleonard/fiber-reliability-sdk
 
 TypeScript diagnostics, readiness, and recovery primitives for Fiber Network payment infrastructure.
 
@@ -9,7 +9,7 @@ Fiber Reliability Kit helps wallets, merchants, LSPs, node operators, and CKB ec
 ## Install
 
 ```bash
-npm install @fiber-reliability/sdk
+npm install @nwobodoleonard/fiber-reliability-sdk
 ```
 
 ## Quick Usage
@@ -20,7 +20,7 @@ import {
   checkReadiness,
   inspectCchOrder,
   explainPayment
-} from '@fiber-reliability/sdk'
+} from '@nwobodoleonard/fiber-reliability-sdk'
 
 const intent = analyzePaymentIntent({
   intent: {

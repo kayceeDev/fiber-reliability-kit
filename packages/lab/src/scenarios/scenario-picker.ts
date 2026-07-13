@@ -1,4 +1,4 @@
-import type { ReliabilityFixture } from '@fiber-reliability/sdk'
+import type { ReliabilityFixture } from '@nwobodoleonard/fiber-reliability-sdk'
 
 import { getBrowserScenarioFixture } from '../data/scenario-fixtures.js'
 import { getLabScenarioManifest } from '../data/scenario-manifest.js'

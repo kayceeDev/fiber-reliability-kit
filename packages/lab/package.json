@@ -7,7 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@fiber-reliability/sdk": "workspace:*"
+    "@nwobodoleonard/fiber-reliability-sdk": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.2",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "corepack pnpm --filter @fiber-reliability/sdk build && vite build",
+    "build": "corepack pnpm --filter @nwobodoleonard/fiber-reliability-sdk build && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json"
   }

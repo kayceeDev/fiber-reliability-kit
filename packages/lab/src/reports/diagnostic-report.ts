@@ -11,7 +11,7 @@ import {
   type DiagnosticSource,
   type RecoveryAction,
   type ReliabilityFixture
-} from '@fiber-reliability/sdk'
+} from '@nwobodoleonard/fiber-reliability-sdk'
 
 import { getBrowserScenarioFixture } from '../data/scenario-fixtures.js'
 

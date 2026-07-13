@@ -1,5 +1,5 @@
 {
-  "name": "@fiber-reliability/sdk",
+  "name": "@nwobodoleonard/fiber-reliability-sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for Fiber payment diagnostics, readiness checks, CCH inspection, and recovery guidance.",
   "type": "module",

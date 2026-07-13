@@ -1,4 +1,4 @@
-import type { DiagnosticSeverity } from '@fiber-reliability/sdk'
+import type { DiagnosticSeverity } from '@nwobodoleonard/fiber-reliability-sdk'
 
 import { createLocalRpcModeConfig } from '../config/local-rpc-mode.js'
 import {

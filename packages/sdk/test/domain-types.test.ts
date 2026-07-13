@@ -16,7 +16,7 @@ import {
 
 describe('sdk domain types', () => {
   it('exports the workspace package name', () => {
-    expect(sdkPackageName).toBe('@fiber-reliability/sdk')
+    expect(sdkPackageName).toBe('@nwobodoleonard/fiber-reliability-sdk')
   })
 
   it('exports diagnostic severity values', () => {

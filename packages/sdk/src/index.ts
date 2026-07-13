@@ -1,4 +1,4 @@
-export const sdkPackageName = '@fiber-reliability/sdk'
+export const sdkPackageName = '@nwobodoleonard/fiber-reliability-sdk'
 
 export {
   diagnosticCodes,

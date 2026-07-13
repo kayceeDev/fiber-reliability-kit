@@ -13,7 +13,7 @@ import {
   type DiagnosticSeverity,
   type FiberJsonRpcMethod,
   type FiberRpcTransport
-} from '@fiber-reliability/sdk'
+} from '@nwobodoleonard/fiber-reliability-sdk'
 
 import { createCliShell } from './cli-shell.js'
 

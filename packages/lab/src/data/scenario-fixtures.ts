@@ -1,7 +1,7 @@
 import {
   parseReliabilityFixtureData,
   type ReliabilityFixture
-} from '@fiber-reliability/sdk'
+} from '@nwobodoleonard/fiber-reliability-sdk'
 
 const rawScenarioFixtures = import.meta.glob('../../../../fixtures/scenarios/*.json', {
   eager: true,
