@@ -1,0 +1,6 @@
+[build]
+  command = "corepack pnpm build:lab"
+  publish = "packages/lab/dist"
+
+[build.environment]
+  NODE_VERSION = "22"

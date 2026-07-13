@@ -5,8 +5,10 @@
   "type": "module",
   "packageManager": "pnpm@11.9.0",
   "scripts": {
-    "typecheck": "tsc -b packages/sdk/tsconfig.json packages/cli/tsconfig.json packages/lab/tsconfig.json",
-    "test": "vitest run"
+    "build:lab": "corepack pnpm --filter fiber-reliability-lab build",
+    "build:sdk": "corepack pnpm --filter @fiber-reliability/sdk build",
+    "typecheck": "corepack pnpm --filter @fiber-reliability/sdk build && tsc -b packages/sdk/tsconfig.json packages/cli/tsconfig.json packages/lab/tsconfig.json",
+    "test": "corepack pnpm --filter @fiber-reliability/sdk build && vitest run"
   },
   "devDependencies": {
     "@types/node": "^24.0.13",

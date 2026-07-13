@@ -1,12 +1,57 @@
 {
   "name": "@fiber-reliability/sdk",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Fiber payment diagnostics, readiness checks, CCH inspection, and recovery guidance.",
   "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "ckb",
+    "fiber",
+    "fiber-network",
+    "nervos",
+    "payments",
+    "routing",
+    "diagnostics",
+    "sdk",
+    "cross-chain",
+"reliability"
+  ],
+  "homepage": "https://github.com/kayceeDev/fiber-reliability-kit#readme",
+  "bugs": {
+    "url": "https://github.com/kayceeDev/fiber-reliability-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kayceeDev/fiber-reliability-kit.git",
+    "directory": "packages/sdk"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "zod": "^4.1.5"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "node --input-type=module -e \"import fs from 'node:fs'; fs.rmSync('dist', { recursive: true, force: true }); fs.rmSync('tsconfig.build.tsbuildinfo', { force: true });\"",
+    "pack:check": "npm pack --dry-run",
+    "prepack": "npm run clean && npm run build",
     "typecheck": "tsc -p tsconfig.json"
   }
 }

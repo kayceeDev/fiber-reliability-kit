@@ -61,6 +61,12 @@ It answers a simple integration question:
 
 4. Use the CLI package exports and the packaged Lab HTML/document renderers as the current runnable demo surfaces.
 
+## Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for npm publishing and Netlify Free hosting instructions.
+
+The SDK package is prepared as `@fiber-reliability/sdk` and the Lab deploys as a static Vite site from `packages/lab/dist`.
+
 ## Repository structure
 
 - [packages/sdk/](packages/sdk/) — SDK domains and RPC normalization
