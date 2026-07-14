@@ -8,7 +8,7 @@ Fiber Reliability Kit is a reusable reliability layer for Fiber Network on Nervo
 
 ## Deliverables
 
-- `@fiber-reliability/sdk`
+- `@nwobodoleonard/fiber-reliability-sdk`
 - `fiber-doctor` CLI
 - Reliability Lab packaged HTML demo surface
 

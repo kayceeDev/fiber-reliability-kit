@@ -65,7 +65,7 @@ It answers a simple integration question:
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for npm publishing and Netlify Free hosting instructions.
 
-The SDK package is prepared as `@fiber-reliability/sdk` and the Lab deploys as a static Vite site from `packages/lab/dist`.
+The SDK package is prepared as `@nwobodoleonard/fiber-reliability-sdk` and the Lab deploys as a static Vite site from `packages/lab/dist`.
 
 ## Repository structure
 
